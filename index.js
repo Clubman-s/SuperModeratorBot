@@ -6,15 +6,14 @@ const app = express();
 // Модерация
 const badWords = ['спам', 'мат', 'оскорбление'];
 bot.on('text', (ctx) => {
-  if (badWords.some(word => ctx.message.text.includes(word))) {
+  if (badWords.some(word => ctx.message.text.toLowerCase().includes(word))) {
     ctx.deleteMessage();
-    ctx.reply('❌ Сообщение удалено!');
+    ctx.reply('❌ Сообщение удалено за нарушение правил!');
   }
 });
 
-// Включаем вебхук
+// Вебхук
 app.use(bot.webhookCallback('/'));
 bot.telegram.setWebhook(`https://${process.env.VERCEL_URL}/api`);
 
-// Запуск сервера
 module.exports = app;
