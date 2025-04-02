@@ -3,21 +3,20 @@ const express = require('express');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const app = express();
 
-// Настройка вебхука (только для POST!)
+// Вебхук (POST-обработчик)
 app.post('/api', bot.webhookCallback('/api'));
 
-// Модерация сообщений
+// Модерация
 const badWords = ['спам', 'мат', 'оскорбление'];
 bot.on('text', (ctx) => {
-  if (badWords.some(word => ctx.message.text.toLowerCase().includes(word))) {
+  const text = ctx.message.text.toLowerCase();
+  if (badWords.some(word => text.includes(word))) {
     ctx.deleteMessage();
     ctx.reply('❌ Сообщение удалено!');
   }
 });
 
-// Обработчик для GET (опционально, только для проверки)
-app.get('/', (req, res) => {
-  res.send('Бот работает! Отправьте POST-запросы на /api');
-});
+// GET-запрос для проверки (опционально)
+app.get('/', (req, res) => res.send('Бот работает!'));
 
 module.exports = app;
