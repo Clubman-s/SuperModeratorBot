@@ -3,18 +3,27 @@ const express = require('express');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const app = express();
 
-// Обработчик для GET / (чтобы Vercel не ругался)
-app.get('/', (req, res) => res.send('Бот работает! Используйте POST /api для Telegram'));
+// Включите максимальное логирование
+app.use((req, res, next) => {
+  console.log(`📨 ${req.method} ${req.url}`, req.headers);
+  next();
+});
 
-// Основной обработчик для Telegram
-app.post('/api', express.json(), (req, res) => {
-  console.log('Получен запрос от Telegram');
+app.use(express.json());
+
+// Главный обработчик
+app.post('/api', (req, res) => {
+  console.log('🔹 Тело запроса:', req.body);
   bot.handleUpdate(req.body, res);
 });
 
-// Простейший обработчик сообщений
+// Обязательный GET-обработчик
+app.get('/', (req, res) => res.send('Бот активен!'));
+
+// Обработчик сообщений
 bot.on('text', (ctx) => {
-  ctx.reply('Получил ваше сообщение: ' + ctx.message.text);
+  console.log('✉️ Получено:', ctx.message.text);
+  ctx.reply('Ответ: ' + ctx.message.text);
 });
 
 module.exports = app;
