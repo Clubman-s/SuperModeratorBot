@@ -1,29 +1,17 @@
 const { Telegraf } = require('telegraf');
-const express = require('express');
 const bot = new Telegraf(process.env.BOT_TOKEN);
-const app = express();
 
-// Включите максимальное логирование
-app.use((req, res, next) => {
-  console.log(`📨 ${req.method} ${req.url}`, req.headers);
-  next();
+// Включаем максимальное логирование
+bot.use((ctx, next) => {
+  console.log('📨 Update:', ctx.update);
+  return next();
 });
 
-app.use(express.json());
-
-// Главный обработчик
-app.post('/api', (req, res) => {
-  console.log('🔹 Тело запроса:', req.body);
-  bot.handleUpdate(req.body, res);
-});
-
-// Обязательный GET-обработчик
-app.get('/', (req, res) => res.send('Бот активен!'));
-
-// Обработчик сообщений
+// Простейший обработчик
 bot.on('text', (ctx) => {
-  console.log('✉️ Получено:', ctx.message.text);
-  ctx.reply('Ответ: ' + ctx.message.text);
+  console.log('💬 Received:', ctx.message.text);
+  ctx.reply('Бот работает! Ваш текст: ' + ctx.message.text);
 });
 
-module.exports = app;
+// Экспортируем обработчик для Vercel
+module.exports = bot.webhookCallback('/api');
