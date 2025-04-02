@@ -3,20 +3,20 @@ const express = require('express');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const app = express();
 
-// Вебхук (POST-обработчик)
+// Фикс для Vercel: явно указываем обработчик POST
+app.use(express.json()); // Добавьте эту строку!
 app.post('/api', bot.webhookCallback('/api'));
 
 // Модерация
-const badWords = ['спам', 'мат', 'оскорбление'];
 bot.on('text', (ctx) => {
-  const text = ctx.message.text.toLowerCase();
-  if (badWords.some(word => text.includes(word))) {
+  const badWords = ['спам', 'мат', 'оскорбление'];
+  if (badWords.some(word => ctx.message.text.toLowerCase().includes(word))) {
     ctx.deleteMessage();
     ctx.reply('❌ Сообщение удалено!');
   }
 });
 
-// GET-запрос для проверки (опционально)
-app.get('/', (req, res) => res.send('Бот работает!'));
+// Для проверки (GET /)
+app.get('/', (req, res) => res.send('Use POST /api for Telegram webhook'));
 
 module.exports = app;
