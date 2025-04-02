@@ -8,6 +8,5 @@
     "src": "/api",
     "dest": "/index.js",
     "methods": ["POST"]
-  }],
-  "regions": ["fra1"]  
+  }]
 }
