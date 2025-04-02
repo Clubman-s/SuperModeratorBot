@@ -8,15 +8,14 @@
     {
       "src": "/api",
       "dest": "/index.js",
-      "methods": ["POST"],  // Разрешаем ТОЛЬКО POST!
+      "methods": ["POST"],  
       "headers": {
-        "Content-Type": "application/json"  // Обязательно для Telegram API
-      }
+        "Content-Type": "application/json"  
     },
     {
       "src": "/",
       "dest": "/index.js",
-      "methods": ["GET"]  // Для проверки работы
+      "methods": ["GET"]  
     }
   ]
 }
