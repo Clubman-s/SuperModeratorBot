@@ -8,8 +8,20 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
-      "dest": "index.js"
+      "src": "/api",
+      "dest": "/index.js",
+      "methods": ["POST"]
+    },
+    {
+      "src": "/",
+      "dest": "/index.js",
+      "methods": ["GET"]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/index.js"
     }
   ]
 }
