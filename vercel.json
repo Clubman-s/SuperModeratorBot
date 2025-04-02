@@ -9,5 +9,5 @@
     "dest": "/index.js",
     "methods": ["POST"]
   }],
-  "regions": ["fra1"]  // Выбираем европейский сервер
+  "regions": ["fra1"]  
 }
