@@ -1,13 +1,20 @@
 const { Telegraf } = require('telegraf');
+const express = require('express');
 const bot = new Telegraf(process.env.BOT_TOKEN);
+const app = express();
 
-// Удаляет сообщения с плохими словами
+// Модерация
 const badWords = ['спам', 'мат', 'оскорбление'];
 bot.on('text', (ctx) => {
   if (badWords.some(word => ctx.message.text.includes(word))) {
     ctx.deleteMessage();
-    ctx.reply('❌ Сообщение удалено за нарушение правил!');
+    ctx.reply('❌ Сообщение удалено!');
   }
 });
 
-bot.launch();
+// Включаем вебхук
+app.use(bot.webhookCallback('/'));
+bot.telegram.setWebhook(`https://${process.env.VERCEL_URL}/api`);
+
+// Запуск сервера
+module.exports = app;
