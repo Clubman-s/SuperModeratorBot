@@ -10,21 +10,12 @@
     {
       "src": "/api",
       "dest": "/index.js",
-      "methods": ["POST"],
-      "headers": {
-        "Content-Type": "application/json"
-      }
+      "methods": ["POST"]
     },
     {
-      "src": "/(.*)",
+      "src": "/",
       "dest": "/index.js",
       "methods": ["GET"]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/index.js"
     }
   ]
 }
