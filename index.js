@@ -3,22 +3,31 @@ const express = require('express');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const app = express();
 
-// Явно указываем обработчик для POST /api
-app.post('/api', express.json(), (req, res) => {
-  console.log('Тело запроса:', req.body); // Логируем входящие данные
-  bot.handleUpdate(req.body, res);
+// Логирование ВСЕХ входящих запросов
+app.use((req, res, next) => {
+  console.log('📨 Запрос:', req.method, req.url, req.headers);
+  next();
 });
 
-// Модерация сообщений
+// Обработчик для Telegram
+app.post('/api', express.json(), (req, res) => {
+  console.log('🔹 Тело запроса:', JSON.stringify(req.body, null, 2));
+  bot.handleUpdate(req.body, res); // Передаём данные боту
+});
+
+// Модерация
 bot.on('text', (ctx) => {
   const badWords = ['спам', 'мат', 'бля'];
-  if (badWords.some(word => ctx.message.text.toLowerCase().includes(word))) {
+  const text = ctx.message.text.toLowerCase();
+  
+  if (badWords.some(word => text.includes(word))) {
     ctx.deleteMessage();
-    ctx.reply('❌ Нарушение правил!');
+    ctx.reply('❌ Сообщение удалено!');
+    console.log('Удалено:', text); // Логируем в Vercel
   }
 });
 
-// Для проверки работоспособности
-app.get('/', (req, res) => res.send('Бот работает!'));
+// Для проверки (GET /)
+app.get('/', (req, res) => res.send('Бот активен!'));
 
 module.exports = app;
