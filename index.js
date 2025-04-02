@@ -3,28 +3,30 @@ const express = require('express');
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const app = express();
 
-// Журналирование ВСЕХ запросов
-app.use((req, res, next) => {
-  console.log('📨 Получен запрос:', req.method, req.url, req.headers);
+// Блокируем все GET-запросы к /api
+app.use('/api', (req, res, next) => {
+  if (req.method === 'GET') {
+    console.log('🚫 Блокируем GET к /api');
+    return res.status(405).send('Method Not Allowed');
+  }
   next();
 });
 
-// Явный обработчик вебхука
+// Обработчик POST-запросов от Telegram
 app.post('/api', express.json(), (req, res) => {
-  console.log('🔹 Тело запроса от Telegram:', JSON.stringify(req.body));
-  bot.handleUpdate(req.body, res); // Передаём запрос боту
+  console.log('🔹 Telegram Update:', JSON.stringify(req.body, null, 2));
+  bot.handleUpdate(req.body, res);
 });
 
-// Тестовая GET-страница
+// Тестовая страница
 app.get('/', (req, res) => {
-  console.log('🔄 Кто-то проверил бота через GET');
-  res.send('Бот активен! Используйте POST /api для вебхука');
+  res.send('Бот работает! Отправьте POST на /api');
 });
 
 // Обработчик сообщений
 bot.on('text', (ctx) => {
-  console.log('✉️ Получено сообщение:', ctx.message.text);
-  ctx.reply('Ваше сообщение: ' + ctx.message.text);
+  console.log('✉️ Сообщение:', ctx.message.text);
+  ctx.reply('Получено: ' + ctx.message.text);
 });
 
 module.exports = app;
